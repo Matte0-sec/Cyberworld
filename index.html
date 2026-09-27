@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="de">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="CyberWorld - deine digitale Welt zum Entdecken, Lernen und Erschaffen." />
+		<title>CyberWorld</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+		<link rel="stylesheet" href="styles.css" />
+	</head>
+	<body>
+		<div class="app-shell">
+			<aside class="sidebar" aria-label="Hauptnavigation">
+				<a class="brand" href="#dashboard" data-view-link="dashboard" aria-label="CyberWorld Startseite">
+					<span class="brand-mark" aria-hidden="true">C</span>
+					<span>CYBER<span>WORLD</span></span>
+				</a>
+
+				<nav class="main-nav" id="main-nav">
+					<button class="nav-item is-active" type="button" data-view="dashboard"><span aria-hidden="true">⌂</span> Dashboard</button>
+					<button class="nav-item" type="button" data-view="games"><span aria-hidden="true">◉</span> Games</button>
+					<button class="nav-item" type="button" data-view="puzzles"><span aria-hidden="true">◇</span> Rätsel</button>
+					<button class="nav-item" type="button" data-view="school"><span aria-hidden="true">⌁</span> Schule</button>
+					<button class="nav-item" type="button" data-view="coding"><span aria-hidden="true">&lt;/&gt;</span> Coding</button>
+					<button class="nav-item" type="button" data-view="tools"><span aria-hidden="true">⌘</span> Tools</button>
+					<button class="nav-item" type="button" data-view="creative"><span aria-hidden="true">✦</span> Kreativ</button>
+				</nav>
+
+				<div class="profile-card">
+					<div class="avatar" aria-hidden="true">N</div>
+					<div>
+						<strong>Neon Explorer</strong>
+						<span id="sidebar-level">Level 1</span>
+					</div>
+				</div>
+			</aside>
+
+			<main class="main-content">
+				<header class="topbar">
+					<button class="menu-toggle" id="menu-toggle" type="button" aria-label="Navigation öffnen">☰</button>
+					<p class="system-status"><span></span> CYBERWORLD ONLINE</p>
+					<div class="xp-readout"><span>XP</span><strong id="header-xp">120</strong><small>/ <span id="header-next-level">300</span></small></div>
+				</header>
+
+				<section class="view is-active" id="dashboard-view" data-view-panel="dashboard" aria-labelledby="dashboard-title">
+					<div class="hero">
+						<div>
+							<p class="eyebrow">Willkommen zurück, Explorer</p>
+							<h1 id="dashboard-title">Deine digitale Welt.<br /><em>Deine Regeln.</em></h1>
+							<p class="hero-copy">Entdecke neue Zonen, sammle Erfahrung und baue dir Schritt für Schritt dein eigenes CyberWorld-Profil auf.</p>
+							<button class="primary-action" type="button" data-view="games">Welt erkunden <span aria-hidden="true">→</span></button>
+						</div>
+						<div class="hero-orbit" aria-hidden="true">
+							<div class="orbit-ring orbit-one"></div><div class="orbit-ring orbit-two"></div>
+							<div class="orbit-core">CW</div>
+							<i class="node node-one"></i><i class="node node-two"></i><i class="node node-three"></i>
+						</div>
+					</div>
+
+					<section class="stats-grid" aria-label="Dein Fortschritt">
+						<article class="stat-card level-card"><span>Dein Level</span><strong id="level-value">1</strong><p><span id="xp-value">120</span> / <span id="xp-target">300</span> XP</p><div class="progress"><i id="xp-progress"></i></div></article>
+						<article class="stat-card"><span>Erfolge</span><strong id="achievement-count">0</strong><p>von <span id="achievement-total">4</span> freigeschaltet</p></article>
+						<article class="stat-card"><span>Entdeckte Zonen</span><strong id="zones-count">1</strong><p>von 6 Bereichen</p></article>
+					</section>
+
+					<section class="world-globe-panel" aria-labelledby="world-globe-title">
+						<div class="world-globe-copy">
+							<p class="eyebrow">CyberWorld Netzwerk</p>
+							<h2 id="world-globe-title">Die Welt wartet auf dich.</h2>
+							<p>Ein erster Blick auf deine digitale Welt. Weitere Orte und Verbindungen können hier später entstehen.</p>
+							<span>STATUS: KARTIERUNG AKTIV</span>
+						</div>
+						<div class="cyber-globe" id="cyber-globe" role="region" aria-label="Drehbare CyberWorld-Kugel mit Coding-Ort">
+							<div class="globe-visual">
+								<div class="globe-shell">
+									<div class="globe-grid globe-longitudes"></div>
+									<div class="globe-grid globe-latitudes"></div>
+									<i class="globe-ring meridian meridian-one"></i><i class="globe-ring meridian meridian-two"></i><i class="globe-ring meridian meridian-three"></i>
+									<i class="globe-ring latitude latitude-one"></i><i class="globe-ring latitude latitude-two"></i>
+									<i class="continent continent-one"></i><i class="continent continent-two"></i><i class="continent continent-three"></i>
+									<i class="globe-marker marker-two"></i><i class="globe-marker marker-three"></i>
+								</div>
+							</div>
+							<button class="globe-marker marker-one coding-marker" type="button" data-view="coding" data-coding-mode="learn" aria-label="Coding lernen öffnen"><span>&lt;/&gt;</span></button>
+						</div>
+					</section>
+
+					<section class="section-header"><div><p class="eyebrow">Deine Zonen</p><h2>Wohin geht die Reise?</h2></div><p>Jeder Bereich ist ein eigenständiger Baustein für deine Welt.</p></section>
+					<div class="zone-grid" id="zone-grid"></div>
+
+					<section class="activity-panel">
+						<div class="section-header"><div><p class="eyebrow">Protokoll</p><h2>Letzte Aktivitäten</h2></div></div>
+						<ul id="activity-list"><li><time>Jetzt</time><span>CyberWorld-Profil initialisiert.</span></li></ul>
+					</section>
+				</section>
+
+				<section class="view section-view" id="games-view" data-view-panel="games" aria-labelledby="games-title"></section>
+				<section class="view section-view" id="puzzles-view" data-view-panel="puzzles" aria-labelledby="puzzles-title"></section>
+				<section class="view section-view" id="school-view" data-view-panel="school" aria-labelledby="school-title"></section>
+				<section class="view section-view" id="coding-view" data-view-panel="coding" aria-labelledby="coding-title"></section>
+				<section class="view section-view" id="tools-view" data-view-panel="tools" aria-labelledby="tools-title"></section>
+				<section class="view section-view" id="creative-view" data-view-panel="creative" aria-labelledby="creative-title"></section>
+			</main>
+		</div>
+		<script src="app.js"></script>
+	</body>
+</html>
