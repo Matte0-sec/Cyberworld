@@ -16,7 +16,7 @@ const achievements = [
 
 const state = {
 	xp: 120, discovered: new Set(["dashboard"]), activity: ["CyberWorld-Profil initialisiert."],
-	reactionActive: false, reactionStart: 0, reactionTimeout: null, puzzleSolved: false, schoolAnswered: false,
+	reactionActive: false, reactionStart: 0, reactionTimeout: null, puzzleSolved: false, schoolGrade: "1", schoolQuestion: null,
 	timerSeconds: 300, timerHandle: null, stopwatchSeconds: 0, stopwatchHandle: null, pixelColor: "#37e6ff",
 };
 const codingLessons = {
@@ -71,7 +71,7 @@ function buildAreaViews() {
 	const panels = {
 		games: `<div class="zone-heading"><p class="eyebrow">Zone Games</p><h1 id="games-title">Arcade.<br><em>Reagiere schnell.</em></h1><p class="section-lead">Sammle XP mit kurzen Browser-Games. Dein Bestwert bleibt während der Sitzung erhalten.</p></div><section class="tool-surface" style="--accent:#37e6ff"><div><p class="eyebrow">Reaktions-Test</p><h2>Signaljagd</h2><p id="reaction-copy">Starte den Test. Warte auf das grüne Signal und tippe dann so schnell wie möglich.</p><button class="primary-action" type="button" data-action="reaction-start">Test starten</button></div><button class="reaction-pad" id="reaction-pad" type="button" disabled>WARTEN</button><p class="result-line" id="reaction-result"></p></section>`,
 		puzzles: `<div class="zone-heading"><p class="eyebrow">Zone Rätsel</p><h1 id="puzzles-title">Knoten lösen.<br><em>Klare Gedanken.</em></h1><p class="section-lead">Eine tägliche Mini-Challenge als Ausgangspunkt für spätere Rätsel, Quiz und Memory-Module.</p></div><section class="tool-surface" style="--accent:#fb4fd2"><div><p class="eyebrow">Tageschallenge</p><h2>Zahlenfolge</h2><p>Welche Zahl folgt? <strong>3, 6, 12, 24, ?</strong></p><form id="puzzle-form" class="inline-form"><input id="puzzle-answer" type="number" placeholder="Antwort" required><button type="submit">Prüfen</button></form><p class="result-line" id="puzzle-result"></p></div><div class="challenge-badge">+40<br><small>XP</small></div></section>`,
-		school: `<div class="zone-heading"><p class="eyebrow">Zone Schule</p><h1 id="school-title">Lernen.<br><em>Leveln.</em></h1><p class="section-lead">Lernmodule können später Themen, Karteikarten und Fortschrittspläne erhalten. Zum Start gibt es eine Mathematikaufgabe.</p></div><section class="tool-surface" style="--accent:#c8fb66"><div><p class="eyebrow">Mathematik</p><h2>Kopfrechnen</h2><p>Ein Rechteck ist 8 cm lang und 5 cm breit. Wie groß ist seine Fläche in cm²?</p><form id="school-form" class="inline-form"><input id="school-answer" type="number" placeholder="Antwort" required><button type="submit">Antwort senden</button></form><p class="result-line" id="school-result"></p></div><div class="challenge-badge">+35<br><small>XP</small></div></section>`,
+		school: `<div class="zone-heading"><p class="eyebrow">Zone Schule</p><h1 id="school-title">Lernen.<br><em>Leveln.</em></h1><p class="section-lead">Wähle deine Klasse. Die Kopfrechenaufgaben passen sich an und nach jeder richtigen Antwort geht es direkt weiter.</p></div><section class="tool-surface" style="--accent:#c8fb66"><div><p class="eyebrow">Mathematik</p><h2>Kopfrechnen</h2><label class="school-grade-label" for="school-grade">Meine Klasse<select id="school-grade"><option value="1">1. Klasse</option><option value="2">2. Klasse</option><option value="3">3. Klasse</option><option value="4">4. Klasse</option><option value="5">5. Klasse</option><option value="6">6. Klasse</option><option value="7">7. Klasse</option><option value="8">8. Klasse</option></select></label><p id="school-task" class="school-task"></p><form id="school-form" class="inline-form"><input id="school-answer" type="number" inputmode="decimal" placeholder="Antwort" required><button type="submit">Prüfen</button></form><p class="result-line" id="school-result"></p></div><div class="challenge-badge">+25<br><small>XP</small></div></section>`,
 		coding: `<div class="zone-heading"><p class="eyebrow">Coding Campus</p><h1 id="coding-title">Code schreiben.<br><em>Sofort sehen.</em></h1><p class="section-lead">Entscheide selbst: Lerne erst die Bausteine kennen oder schreibe direkt eigenen Code.</p></div><div class="coding-mode-toggle" role="group" aria-label="Coding-Modus auswählen"><button class="is-active" type="button" data-action="coding-mode" data-mode="practice">Programmieren</button><button type="button" data-action="coding-mode" data-mode="learn">Lernen</button></div><section class="coding-lab coding-practice"><div class="lesson-sidebar"><p class="eyebrow">Lernpfad</p><div class="lesson-tabs"><button type="button" data-action="coding-lesson" data-lesson="html">01 HTML</button><button type="button" data-action="coding-lesson" data-lesson="css">02 CSS</button><button type="button" data-action="coding-lesson" data-lesson="javascript">03 JavaScript</button></div><p id="coding-explanation" class="lesson-explanation"></p><button class="primary-action" type="button" data-action="run-code">Code ausführen</button><p class="result-line" id="coding-result"></p></div><div class="code-workspace"><div class="editor-grid"><label>HTML<textarea id="html-editor" spellcheck="false"></textarea></label><label>CSS<textarea id="css-editor" spellcheck="false"></textarea></label><label>JavaScript<textarea id="js-editor" spellcheck="false"></textarea></label></div><div class="preview-pane"><span>LIVE-VORSCHAU</span><iframe id="code-preview" title="Vorschau deines Codes" sandbox="allow-scripts"></iframe></div></div></section><section class="coding-learn" hidden><div class="learn-intro"><p class="eyebrow">Bausteine verstehen</p><h2>Was macht welcher Code?</h2><p>Wähle einen Baustein und sieh dir seine Aufgabe direkt an. Danach kannst du ihn im Programmiermodus selbst verändern.</p></div><div class="reference-grid"><article class="reference-card"><span class="reference-language">HTML</span><h3>&lt;h1&gt;Titel&lt;/h1&gt;</h3><p>Erstellt eine große Überschrift. Sie beschreibt das wichtigste Thema einer Seite.</p><code>&lt;p&gt;Text&lt;/p&gt;</code><p>Erstellt einen normalen Absatz für zusammenhängenden Text.</p><code>&lt;button&gt;Klick mich&lt;/button&gt;</code><p>Erstellt eine Schaltfläche, die später mit JavaScript reagieren kann.</p><button type="button" data-action="coding-learn-example" data-lesson="html">Im Editor ausprobieren</button></article><article class="reference-card"><span class="reference-language css-reference">CSS</span><h3>color: #0b7285;</h3><p>Legt die Farbe eines Textes fest. Hier bekommt der Text ein Türkis.</p><code>padding: 24px;</code><p>Erzeugt Innenabstand, damit Inhalt nicht direkt am Rand klebt.</p><code>border-radius: 12px;</code><p>Rundet Ecken ab, zum Beispiel bei Karten oder Buttons.</p><button type="button" data-action="coding-learn-example" data-lesson="css">Im Editor ausprobieren</button></article><article class="reference-card"><span class="reference-language js-reference">JAVASCRIPT</span><h3>addEventListener('click', ...)</h3><p>Wartet darauf, dass jemand auf ein Element klickt, und führt dann Code aus.</p><code>document.querySelector('#id')</code><p>Findet ein HTML-Element über seine ID, damit JavaScript es verändern kann.</p><code>textContent = 'Neu!'</code><p>Ändert den sichtbaren Text eines Elements auf der Seite.</p><button type="button" data-action="coding-learn-example" data-lesson="javascript">Im Editor ausprobieren</button></article></div></section>`,
 		tools: `<div class="zone-heading"><p class="eyebrow">Zone Tools</p><h1 id="tools-title">Werkzeuge.<br><em>Sofort bereit.</em></h1><p class="section-lead">Kleine Werkzeuge für Konzentration und schnelle Berechnungen. Notizen werden lokal in dieser Sitzung gehalten.</p></div><div class="functional-grid"><section class="functional-card"><p class="eyebrow">Rechner</p><h2>Berechnung</h2><form id="calculator-form" class="stack-form"><input id="calc-expression" inputmode="text" placeholder="z. B. (12 + 8) / 2" required><button type="submit">Berechnen</button></form><p class="result-line" id="calc-result"></p></section><section class="functional-card"><p class="eyebrow">Fokus</p><h2>Timer & Stoppuhr</h2><div class="clock" id="timer-display">05:00</div><div class="button-row"><button data-action="timer-toggle" type="button">Start / Pause</button><button data-action="timer-reset" type="button">Reset</button></div><div class="clock small" id="stopwatch-display">00:00</div><div class="button-row"><button data-action="stopwatch-toggle" type="button">Stoppuhr</button><button data-action="stopwatch-reset" type="button">Reset</button></div></section><section class="functional-card"><p class="eyebrow">Notizen</p><h2>Gedankenbox</h2><textarea id="notes-input" placeholder="Schreib etwas auf..."></textarea><button data-action="save-note" type="button">Notiz speichern</button><p class="result-line" id="notes-result"></p></section></div>`,
 		creative: `<div class="zone-heading"><p class="eyebrow">Zone Kreativ</p><h1 id="creative-title">Pixel setzen.<br><em>Welt gestalten.</em></h1><p class="section-lead">Ein kleines Pixel-Art-Feld als erster kreativer Baustein. Wähle eine Farbe, male und speichere dein Motiv als Muster.</p></div><section class="pixel-studio"><div><p class="eyebrow">Pixel-Art Editor</p><h2>Neon Canvas</h2><div class="color-row"><button class="color-swatch is-selected" data-color="#37e6ff" style="--swatch:#37e6ff" aria-label="Cyan auswählen"></button><button class="color-swatch" data-color="#fb4fd2" style="--swatch:#fb4fd2" aria-label="Pink auswählen"></button><button class="color-swatch" data-color="#c8fb66" style="--swatch:#c8fb66" aria-label="Lime auswählen"></button><button class="color-swatch" data-color="#a778ff" style="--swatch:#a778ff" aria-label="Violett auswählen"></button><button class="clear-button" data-action="pixel-clear" type="button">Leeren</button></div><button class="primary-action" data-action="pixel-save" type="button">Kunstwerk speichern</button><p class="result-line" id="pixel-result"></p></div><div class="pixel-grid" id="pixel-grid" aria-label="Pixel-Zeichenfeld"></div></section>`,
@@ -79,12 +79,49 @@ function buildAreaViews() {
 	Object.entries(areas).forEach(([id, area]) => { document.querySelector(`[data-view-panel="${id}"]`).innerHTML = panels[id]; });
 	buildPixelGrid();
 	buildGuidedProjects();
+	generateSchoolQuestion();
 }
 
 function buildPixelGrid() {
 	const grid = document.querySelector("#pixel-grid");
 	if (!grid) return;
 	grid.replaceChildren(...Array.from({ length: 144 }, (_, index) => { const pixel = document.createElement("button"); pixel.type = "button"; pixel.className = "pixel"; pixel.dataset.pixel = index; pixel.setAttribute("aria-label", `Pixel ${index + 1}`); return pixel; }));
+}
+
+function randomNumber(minimum, maximum) { return Math.floor(Math.random() * (maximum - minimum + 1)) + minimum; }
+
+function generateSchoolQuestion() {
+	const grade = Number(state.schoolGrade);
+	let first; let second; let operator; let answer; let hint;
+	if (grade <= 2) {
+		first = randomNumber(3, grade === 1 ? 20 : 50); second = randomNumber(1, first); operator = Math.random() < .5 ? "+" : "−";
+		if (operator === "+") { second = randomNumber(1, grade === 1 ? 20 : 50); answer = first + second; } else answer = first - second;
+		hint = "Plus und Minus bis " + (grade === 1 ? "40" : "100");
+	} else if (grade <= 4) {
+		first = randomNumber(2, 12); second = randomNumber(2, grade === 3 ? 10 : 12); operator = Math.random() < .5 ? "×" : "÷";
+		if (operator === "÷") { answer = first; first *= second; } else answer = first * second;
+		hint = "Einmaleins und einfache Division";
+	} else if (grade <= 6) {
+		first = randomNumber(20, 200); second = randomNumber(2, 10); operator = Math.random() < .5 ? "×" : "÷";
+		if (operator === "÷") { answer = first; first *= second; } else answer = first * second;
+		hint = "Mal- und Geteiltaufgaben";
+	} else {
+		const percent = [10, 20, 25, 50][randomNumber(0, 3)]; first = randomNumber(2, 12) * 20; second = percent; operator = "% von"; answer = first * percent / 100;
+		hint = "Prozentrechnen mit einfachen Werten";
+	}
+	let explanation;
+	if (operator === "+") explanation = `${first} + ${second} = ${answer}. Du kannst erst ${first} nehmen und dann ${second} dazuzählen.`;
+	else if (operator === "−") explanation = `${first} − ${second} = ${answer}. Ziehe ${second} schrittweise von ${first} ab.`;
+	else if (operator === "×") explanation = `${first} × ${second} = ${answer}. Das bedeutet: ${first} wird ${second}-mal addiert.`;
+	else if (operator === "÷") explanation = `${first} ÷ ${second} = ${answer}. Überlege: Wie oft passt ${second} in ${first}?`;
+	else explanation = `${second} % von ${first} = ${answer}. Rechne ${first} ÷ 100 × ${second}.`;
+	state.schoolQuestion = { answer, task: operator === "% von" ? `${second} % von ${first} = ?` : `${first} ${operator} ${second} = ?`, hint, explanation };
+	const task = document.querySelector("#school-task");
+	if (task) task.textContent = `${hint}: ${state.schoolQuestion.task}`;
+	const answerInput = document.querySelector("#school-answer");
+	if (answerInput) { answerInput.value = ""; answerInput.focus(); }
+	const result = document.querySelector("#school-result");
+	if (result) result.textContent = "";
 }
 
 function buildGuidedProjects() {
@@ -221,13 +258,14 @@ function selectPixelColor(button) { state.pixelColor = button.dataset.color; doc
 
 function handleSubmit(event) {
 	if (event.target.id === "puzzle-form") { event.preventDefault(); const result = document.querySelector("#puzzle-result"); if (Number(document.querySelector("#puzzle-answer").value) === 48 && !state.puzzleSolved) { state.puzzleSolved = true; result.textContent = "Korrekt: Verdopplung erkannt."; addXp(40, "Tageschallenge gelöst."); } else { result.textContent = state.puzzleSolved ? "Diese Challenge ist bereits gelöst." : "Noch nicht. Schau auf die Regel zwischen den Zahlen."; } }
-	if (event.target.id === "school-form") { event.preventDefault(); const result = document.querySelector("#school-result"); if (Number(document.querySelector("#school-answer").value) === 40 && !state.schoolAnswered) { state.schoolAnswered = true; result.textContent = "Richtig. Fläche = Länge × Breite."; addXp(35, "Mathematikaufgabe gelöst."); } else { result.textContent = state.schoolAnswered ? "Diese Aufgabe wurde schon bewertet." : "Fast. Multipliziere Länge und Breite."; } }
+	if (event.target.id === "school-form") { event.preventDefault(); const result = document.querySelector("#school-result"); const answer = Number(document.querySelector("#school-answer").value); if (answer === state.schoolQuestion.answer) { result.textContent = "Richtig! Die nächste Aufgabe kommt sofort."; addXp(25, "Kopfrechenaufgabe gelöst."); window.setTimeout(generateSchoolQuestion, 650); } else { result.textContent = `Noch nicht richtig. ${state.schoolQuestion.explanation}`; } }
 	if (event.target.id === "calculator-form") { event.preventDefault(); const input = document.querySelector("#calc-expression").value; const result = document.querySelector("#calc-result"); if (!/^[\d\s+\-*/().]+$/.test(input)) { result.textContent = "Bitte nutze nur Zahlen und Rechenzeichen."; return; } try { const value = Function(`"use strict"; return (${input})`)(); result.textContent = `Ergebnis: ${Number(value).toLocaleString("de-DE")}`; } catch { result.textContent = "Diese Rechnung ist nicht gültig."; } }
 }
 
 buildZoneCards(); buildAreaViews(); loadCodingLesson("html"); renderProgress(); renderActivity();
 document.addEventListener("click", handleClick);
 document.addEventListener("submit", handleSubmit);
+document.addEventListener("change", (event) => { if (event.target.id === "school-grade") { state.schoolGrade = event.target.value; document.querySelector("#school-result").textContent = "Neue Klassenstufe gewählt."; generateSchoolQuestion(); } });
 elements.menuToggle.addEventListener("click", () => elements.sidebar.classList.toggle("is-open"));
 
 function enableGlobeRotation() {
